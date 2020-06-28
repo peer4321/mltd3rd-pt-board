@@ -17,18 +17,28 @@
             $.getJSON("https://script.google.com/macros/s/AKfycbwMzRhC5m6YAoM4XPRegW2yJsJ1t3h3N598I8EuhKf2pGajBkE/exec",
                     function(data) {
             
-                var displayNames = data.map(x => x["name"])
+                var memos = new Array(data.length)
                 var series = new Array(2 * data.length)
                 
                 for (var i = 0; i < data.length; i++) {
                     var player = data[i]
-                    
                     var points = []
                     var expPoints = []
                     var timestamps = player["timestamps"].map(x => new Date(x).getTime())
+                    
+                    memos[i] = []
                     for (var j = 0; j < timestamps.length; j++) {
-                        points.push([timestamps[j], player["points"][j]])
-                        expPoints.push([timestamps[j], player["exp_points"][j]])
+                        points.push({
+                            x: timestamps[j],
+                            y: player["points"][j],
+                            z: player["memos"][j],
+                        }),
+                        expPoints.push({
+                            x: timestamps[j],
+                            y: Math.floor(player["exp_points"][j]),
+                            z: null,
+                        }),
+                        memos[i].push(player["memos"][j])
                     }
                     
                     series[i] = {
@@ -70,6 +80,15 @@
                     
                     time: {
                         useUTC: false,
+                    },
+                    
+                    tooltip: {
+                        formatter: function(tooltip) {
+                            if (this.point.z == null) {
+                                return tooltip.defaultFormatter.call(this, tooltip)
+                            }
+                            return tooltip.defaultFormatter.call(this, tooltip) + this.point.z
+                        }
                     },
                     
                     xAxis: {

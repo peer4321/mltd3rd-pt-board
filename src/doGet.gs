@@ -14,7 +14,7 @@ function doGet() {
     player["name"] = displayNames[i];
     player["timestamps"] = getTimestamps(playerSheet, rowCount);    
     player["points"] = getPoints(playerSheet, rowCount);
-    player["max_points"] = getMaxPoints(playerSheet, rowCount);
+    player["exp_points"] = getExpPoints(playerSheet, rowCount);
     player["memos"] = getMemos(playerSheet, rowCount);
     
     data.push(player);
